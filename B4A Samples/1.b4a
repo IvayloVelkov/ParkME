@@ -1,0 +1,92 @@
+﻿Build1=Default,b4a.example
+Group=Default Group
+IconFile=
+Library1=core
+Library2=serial
+Library3=randomaccessfile
+Library4=viewsex
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="19"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~'CreateResource(values-v20, theme.xml, ~\n~'<resources>~\n~'    <style ~\n~'        name="LightTheme" parent="@android:style/Theme.Material.Light">~\n~'    </style>~\n~'</resources>~\n~')~\n~'CreateResource(values-v14, theme.xml, ~\n~'<resources>~\n~'    <style ~\n~'        name="LightTheme" parent="@android:style/Theme.Holo.Light">~\n~'    </style>~\n~'</resources>~\n~')~\n~~\n~
+Module1=Starter
+Module2=AsyncStreamsText
+NumberOfFiles=0
+NumberOfLibraries=4
+NumberOfModules=2
+Version=8
+@EndOfDesignText@
+#Region  Project Attributes 
+	#ApplicationLabel: Arduino Bluetooth Example
+	#VersionCode: 1
+	#VersionName: 
+	'SupportedOrientations possible values: unspecified, landscape or portrait.
+	#SupportedOrientations: portrait
+	#CanInstallToExternalStorage: False
+#End Region
+
+#Region  Activity Attributes 
+	#FullScreen: True
+	#IncludeTitle: False
+#End Region
+
+Sub Process_Globals
+	'These global variables will be declared once when the application starts.
+	'These variables can be accessed from all modules.
+
+End Sub
+
+Sub Globals
+	Private lblStatus As Label
+	Private btnConnect As Button
+	Private lblMessage As Label
+	Private lblMessage2 As Label
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+	lblStatus.Initialize("")
+	btnConnect.Initialize("btnConnect")
+	lblMessage.Initialize("")
+	lblMessage2.Initialize("")
+	
+	Activity.AddView(lblStatus, 5%x, 5%y, 90%x, 20%y)
+	Activity.AddView(btnConnect, 5%x, 30%y, 20%x, 10%y)
+	Activity.AddView(lblMessage, 5%x, 55%y, 30%x, 30%y)
+	Activity.AddView(lblMessage2, 40%x, 55%y, 30%x, 30%y)
+	
+	btnConnect.Color = Colors.Blue
+	lblMessage.Color = Colors.Green
+	lblMessage2.Color = Colors.Green
+	
+End Sub
+
+Sub Activity_Resume
+	SetState
+End Sub
+
+Public Sub SetState
+	btnConnect.Enabled = Not(Starter.connected)
+	Dim status As String
+	If Starter.connected Then
+		status = "connected"
+	else if Starter.connecting Then
+		status = "trying to connect..."
+	Else
+		status = "disconnected"
+	End If
+	lblStatus.Text = $"Status: ${status}"$
+End Sub
+
+Public Sub MessageFromDevice(msg As Int, sens As Int)
+	Select sens
+		Case 1: If msg <= 20 Then lblMessage.Color = Colors.Red
+		Case 2: If msg <= 20 Then lblMessage2.Color = Colors.Red
+			
+	End Select
+		
+End Sub
+
+Sub Activity_Pause (UserClosed As Boolean)
+
+End Sub
+
+Sub btnConnect_Click
+	CallSub(Starter, "Connect")
+End Sub
